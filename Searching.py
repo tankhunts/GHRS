@@ -4,9 +4,11 @@ Created on Wed Sep 23 20:57:53 2020
 
 @author: matth
 """
+import pymongo
 import sys
 from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea)
 from PyQt5.QtCore import pyqtSignal
+
 
 class Searching(QWidget):
     
@@ -17,17 +19,35 @@ class Searching(QWidget):
     scrollData = QVBoxLayout()
     ex = pyqtSignal()
     op = pyqtSignal(str)
-    comboData = ["Name", "Age"]
+    comboData = ["First Name", "Last Name", "Full Name", "DOB"]
 
     def return_search_results(self, criteria, text):
-        results = [{"name": "Steve", "age": 19}]
-        #todo: go through mongoDB and find all profiles that fit the criteria
+        results = []
+        print(criteria)
+        mongodbIter = 0
+        myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+        mydb = myclient["GHRS"]
+        mycol = mydb["PatientData"]
+        if(text == ''):
+            mongodbIter = mycol.find()
+        else:
+            if(criteria != 'Full Name'):
+                myquery = {criteria: {"$regex": "^"+text, "$options": "-i"}}
+            else:
+                myquery = {"$or": [{"First Name": {"$regex": "^"+text, "$options": "-i"}}, {"Last Name": {"$regex": "^"+text, "$options": "-i"}}]}
+            mongodbIter = mycol.find(myquery)
+        for item in mongodbIter:
+            results.append(item)
+        if(criteria != 'Full Name'):
+            results = sorted(results, key = lambda i: i[criteria])
+        else:
+            results = sorted(results, key = lambda i: i["First Name"])
         return results
         
     def open_profile(self, name):
         self.op.emit(name)
         
-    def create_result(self, name, age):
+    def create_result(self, name, age, id):
         layout = QHBoxLayout()
         text = QLineEdit(name)
         age = QLineEdit(str(age))
@@ -35,7 +55,7 @@ class Searching(QWidget):
         
         text.setReadOnly(True)
         age.setReadOnly(True)
-        ope.clicked.connect(lambda: self.open_profile(name))
+        ope.clicked.connect(lambda: self.open_profile(id))
         
         layout.addWidget(text)
         layout.addWidget(age)
@@ -55,9 +75,9 @@ class Searching(QWidget):
     
     def begin_search(self):
         self.clear_layout(self.scrollData)
-        data = self.return_search_results(self.criteria.currentData(), self.search.text())
+        data = self.return_search_results(self.criteria.currentText(), self.search.text())
         for item in data:
-            self.scrollData.addLayout(self.create_result(item["name"], item["age"]))
+            self.scrollData.addLayout(self.create_result(item["First Name"] + ' ' + item["Last Name"], item["DOB"], str(item["_id"])))
         
     def back(self):
         self.criteria.clear()
@@ -87,4 +107,5 @@ class Searching(QWidget):
         scroll.setWidget(scrollContents)
         resultLayout.addLayout(barLayout)
         resultLayout.addWidget(scroll)
+
         self.setLayout(resultLayout)
