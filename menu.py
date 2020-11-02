@@ -30,8 +30,6 @@ class MainMenu(QWidget):
         self.nameLabel.setText(self.name)
         self.nameLabel.setAlignment(Qt.AlignCenter)
         self.setWindowTitle(self.title)
-        self.setFixedHeight(self.height)
-        self.setFixedWidth(self.width)
         #creating layout
         self.optionsLayout.addWidget(self.addPatientButton)
         self.optionsLayout.addWidget(self.searchButton)
