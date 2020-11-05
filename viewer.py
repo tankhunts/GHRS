@@ -9,6 +9,7 @@ class ViewProfile(QWidget):
     width = 1000
     ex = pyqtSignal()
     note = pyqtSignal(str)
+    sav = pyqtSignal(str, list)
     noteSearch = pyqtSignal(str)
     currRecord = ''
     DOB = QLineEdit()
@@ -21,13 +22,29 @@ class ViewProfile(QWidget):
     Perscriptions = QTextEdit() 
     name = QLineEdit()
 
+    currID = ""
+
     def back(self):
         self.ex.emit()
     def notes(self):
         self.note.emit("")
     def save(self):
-        #todo: save changes to mongoDB
-        self.ex.emit()
+        self.sav.emit(self.currID, self.getRecord())
+    def setID(self, identifier):
+        self.currID = identifier
+
+    def getRecord(self):
+        record = [
+            self.name.text(),
+            self.DOB.text(),
+            self.race.text(),
+            self.gender.text(), 
+            self.blood.text(),
+            self.company.text(),
+            self.ID.text()]
+            #TODO add notes sections
+        return record
+    
     def __init__(self):
         super(ViewProfile, self).__init__()
         back = QPushButton("Back")

@@ -7,11 +7,14 @@ from Searching import Searching
 from viewer import ViewProfile
 from menu import MainMenu
 from searchNotes import searchNotes
+from profileEditor import ProfileEditor
 
 app.setStyle('Fusion')
 class GHRS(QWidget):
     stacked = QStackedWidget()
     view = ViewProfile()
+    edit = ProfileEditor()
+
     def goAdd(self):
         return
     def goSearch(self):
@@ -53,7 +56,10 @@ class GHRS(QWidget):
         self.view.ex.connect(self.goSearch)
         self.view.note.connect(self.goNoteSearch)
         searchNote.ex.connect(self.goView)
-
+        
+        self.view.sav.connect(self.edit.saveProfile)
+        search.op.connect(self.view.setID)
+    
         layout = QVBoxLayout()
         layout.addWidget(self.stacked)
         self.setLayout(layout)
