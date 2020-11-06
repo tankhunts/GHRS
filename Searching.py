@@ -23,7 +23,6 @@ class Searching(QWidget):
 
     def return_search_results(self, criteria, text):
         results = []
-        print(criteria)
         mongodbIter = 0
         myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
         mydb = myclient["GHRS"]
