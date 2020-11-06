@@ -6,6 +6,7 @@ class searchNotes(QWidget):
     
     height = 1000
     width = 1000
+    currId = ''
     criteria = QComboBox()
     search = QLineEdit()
     scrollData = QVBoxLayout()
@@ -15,7 +16,7 @@ class searchNotes(QWidget):
 
     def return_search_results(self, criteria, text):
         results = []
-        #todo: go through mongoDB and find all notes that fit the criteria
+        
         return results
         
     def open_profile(self, name):

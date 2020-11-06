@@ -8,13 +8,15 @@ from viewer import ViewProfile
 from menu import MainMenu
 from searchNotes import searchNotes
 from profileEditor import ProfileEditor
+from viewnote import ViewNote
 
 app.setStyle('Fusion')
 class GHRS(QWidget):
     stacked = QStackedWidget()
     view = ViewProfile()
     edit = ProfileEditor()
-
+    searchNote = searchNotes()
+    viewNote = ViewNote()
     def goAdd(self):
         return
     def goSearch(self):
@@ -38,25 +40,36 @@ class GHRS(QWidget):
         self.view.conditions.setText(record["Conditions"])
         self.view.Perscriptions.setText(record["Perscriptions"])
         self.stacked.setCurrentIndex(2)
-    def goNoteSearch(self):
+    def goNoteSearch(self, id):
+        self.searchNote.currId = id
         self.stacked.setCurrentIndex(3)
+    def returnView(self):
+        self.stacked.setCurrentIndex(2)
+    def newNote(self, id):
+        self.viewNote.prof_id = id
+        self.stacked.setCurrentIndex(4)
     def __init__(self):
         super(GHRS, self).__init__()
         search = Searching()
         menu = MainMenu()
-        searchNote = searchNotes()
         self.stacked.addWidget(menu)
         self.stacked.addWidget(search)
         self.stacked.addWidget(self.view)
-        self.stacked.addWidget(searchNote)
+        self.stacked.addWidget(self.searchNote)
+        self.stacked.addWidget(self.viewNote)
         menu.add.connect(self.goAdd)
         menu.search.connect(self.goSearch)
         search.ex.connect(self.goMenu) 
         search.op.connect(self.goView)
         self.view.ex.connect(self.goSearch)
-        self.view.note.connect(self.goNoteSearch)
-        searchNote.ex.connect(self.goView)
-        
+
+        self.view.noteSearch.connect(self.goNoteSearch)
+
+        self.view.note.connect(self.newNote)
+
+        self.searchNote.ex.connect(self.returnView)
+        self.viewNote.ret.connect(self.returnView)
+
         self.view.sav.connect(self.edit.saveProfile)
         search.op.connect(self.view.setID)
     

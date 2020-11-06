@@ -27,7 +27,9 @@ class ViewProfile(QWidget):
     def back(self):
         self.ex.emit()
     def notes(self):
-        self.note.emit("")
+        self.note.emit(self.currID)
+    def notesSearch(self):
+        self.noteSearch.emit(self.currID)
     def save(self):
         self.sav.emit(self.currID, self.getRecord())
     def setID(self, identifier):
@@ -60,7 +62,8 @@ class ViewProfile(QWidget):
         top.addWidget(save)
 
         back.clicked.connect(self.back)
-        notes.clicked.connect(self.notes)
+        notes.clicked.connect(self.notesSearch)
+        nnote.clicked.connect(self.notes)
         save.clicked.connect(self.save)
 
 
