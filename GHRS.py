@@ -48,6 +48,15 @@ class GHRS(QWidget):
     def newNote(self, id):
         self.viewNote.prof_id = id
         self.stacked.setCurrentIndex(4)
+    def editNote(self, noteDict):
+        print(self.searchNote.currId)
+        self.viewNote.prof_id = self.searchNote.currId
+        self.searchNote.clear()
+        self.viewNote.oldDict = noteDict
+        self.viewNote.date = noteDict["Date"]
+        self.viewNote.note.setText(noteDict["Note"])
+        self.viewNote.subject.setText(noteDict["Subject"])
+        self.stacked.setCurrentIndex(4)
     def __init__(self):
         super(GHRS, self).__init__()
         search = Searching()
@@ -69,7 +78,7 @@ class GHRS(QWidget):
 
         self.searchNote.ex.connect(self.returnView)
         self.viewNote.ret.connect(self.returnView)
-
+        self.searchNote.op.connect(self.editNote)
         self.view.sav.connect(self.edit.saveProfile)
         search.op.connect(self.view.setID)
     

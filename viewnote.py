@@ -13,7 +13,7 @@ class ViewNote(QWidget):
     subject = QLineEdit()
     prof_id = ''
     date = ''
-    pos = 0
+    oldDict={}
 
     def back(self):
         self.clear()
@@ -26,13 +26,15 @@ class ViewNote(QWidget):
             mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": str(date.today()), "Note": self.note.toPlainText(), "Subject": self.subject.text()}}})
         else:
             mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": self.date, "Note": self.note.toPlainText(), "Subject": self.subject.text()}}})
-            mycol.update({'_id': ObjectId(self.prof_id)}, {"$pull": {"$arrayElemAt": ["$Notes", self.pos]}})
+            mycol.update({'_id': ObjectId(self.prof_id)}, {"$pull": {"Notes": {"Date": self.oldDict["Date"], "Note": self.oldDict["Note"], "Subject": self.oldDict["Subject"]}}})
         self.clear()
         self.ret.emit()
     def clear(self):
         self.note.clear()
         self.date = ''
         self.prof_id = ''
+        self.subject.clear()
+        self.oldDict={}
     def __init__(self):
         super(ViewNote, self).__init__()
         back = QPushButton("Back")
