@@ -10,6 +10,7 @@ import pymongo
 class ViewNote(QWidget):
     note = QTextEdit()
     ret = pyqtSignal()
+    subject = QLineEdit()
     prof_id = ''
     date = ''
     pos = 0
@@ -22,9 +23,9 @@ class ViewNote(QWidget):
         mydb = myclient["GHRS"]
         mycol = mydb["PatientData"]
         if(self.date == ''):
-            mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": str(date.today()), "Note": self.note.toPlainText()}}})
+            mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": str(date.today()), "Note": self.note.toPlainText(), "Subject": self.subject.text()}}})
         else:
-            mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": self.date, "Note": self.note.toPlainText()}}})
+            mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": self.date, "Note": self.note.toPlainText(), "Subject": self.subject.text()}}})
             mycol.update({'_id': ObjectId(self.prof_id)}, {"$pull": {"$arrayElemAt": ["$Notes", self.pos]}})
         self.clear()
         self.ret.emit()
@@ -42,6 +43,7 @@ class ViewNote(QWidget):
         bottom.addWidget(save)
 
         overallLayout = QVBoxLayout()
+        overallLayout.addWidget(self.subject)
         overallLayout.addWidget(self.note)
         overallLayout.addLayout(bottom)
 
