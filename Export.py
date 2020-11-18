@@ -107,6 +107,17 @@ class Export(QWidget):
         self.search.clear()
         self.ex.emit()
 
+    def addAll(self):
+        self.clear_layout(self.scrollData)
+        data = self.return_search_results('First Name', '')
+        for item in data:
+            if item not in self.dbList:
+                self.dbList.append(item)
+
+    def removeAll(self):
+        self.clear_layout(self.scrollData)
+        self.dbList.clear()
+
     def __init__(self):
         super(Export, self).__init__()
         self.resize(self.width, self.height)      
@@ -126,7 +137,21 @@ class Export(QWidget):
         resultLayout = QVBoxLayout()
         scroll.setWidgetResizable(True)
         scroll.setWidget(scrollContents)
+
+        addAll = QPushButton("Add all profiles from export")
+        removeAll = QPushButton("Remove all profiles from export")
+        export = QPushButton("Export")
+        options = QHBoxLayout()
+        options.addWidget(addAll)
+        options.addWidget(removeAll)
+        options.addWidget(export)
+
+        addAll.clicked.connect(self.addAll)
+        removeAll.clicked.connect(self.removeAll)
+#        export.clicked.connect(self.export)
+
         resultLayout.addLayout(barLayout)
         resultLayout.addWidget(scroll)
+        resultLayout.addLayout(options)
 
         self.setLayout(resultLayout)
