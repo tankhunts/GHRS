@@ -95,6 +95,14 @@ class Export(QWidget):
     def begin_search(self):
         self.clear_layout(self.scrollData)
         data = self.return_search_results(self.criteria.currentText(), self.search.text())
+        addRem = QHBoxLayout()
+        remove = QPushButton("Remove all searched profiles")
+        add = QPushButton("Add all searched profiles")
+        remove.clicked.connect(lambda: self.removeSearched(data))
+        add.clicked.connect(lambda: self.addSearched(data))
+        addRem.addWidget(add)
+        addRem.addWidget(remove)
+        self.scrollData.addLayout(addRem)
         for item in data:
             if item in self.dbList:
                 self.scrollData.addLayout(self.create_result_remove(item["First Name"] + ' ' + item["Last Name"], item["DOB"], item))
@@ -124,11 +132,13 @@ class Export(QWidget):
         for result in results:
             if result not in self.dbList:
                 self.dbList.append(result)
+        self.begin_search()                 
     
     def removeSearched(self, results):
         for result in results:
             if result in self.dbList:
-                self.dbList.remove(result)    
+                self.dbList.remove(result)   
+        self.begin_search() 
 
     def __init__(self):
         super(Export, self).__init__()
