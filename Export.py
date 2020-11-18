@@ -5,6 +5,7 @@ Created on Wed Sep 23 20:57:53 2020
 @author: matth
 """
 import pymongo
+import csv
 import sys
 from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea)
 from PyQt5.QtCore import pyqtSignal
@@ -140,6 +141,18 @@ class Export(QWidget):
                 self.dbList.remove(result)   
         self.begin_search() 
 
+    def exporter(self):
+        if self.dbList:
+            try:
+                with open("Database.csv", 'w') as file:
+                    keys = self.dbList[0].keys()
+                    writer = csv.DictWriter(file, fieldnames=keys)
+                    writer.writeheader()
+                    for item in self.dbList:
+                        writer.writerow(item)
+            except IOError:
+                print("Error during I/O")
+
     def __init__(self):
         super(Export, self).__init__()
         self.resize(self.width, self.height)      
@@ -170,7 +183,7 @@ class Export(QWidget):
 
         addAll.clicked.connect(self.addAll)
         removeAll.clicked.connect(self.removeAll)
-#        export.clicked.connect(self.export)
+        export.clicked.connect(self.exporter)
 
         resultLayout.addLayout(barLayout)
         resultLayout.addWidget(scroll)
