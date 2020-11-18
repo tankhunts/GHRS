@@ -106,6 +106,7 @@ class Export(QWidget):
         self.criteria.addItems(self.comboData)
         self.clear_layout(self.scrollData)
         self.search.clear()
+        self.dbList.clear()
         self.ex.emit()
 
     def addAll(self):
@@ -118,6 +119,16 @@ class Export(QWidget):
     def removeAll(self):
         self.clear_layout(self.scrollData)
         self.dbList.clear()
+
+    def addSearched(self, results):
+        for result in results:
+            if result not in self.dbList:
+                self.dbList.append(result)
+    
+    def removeSearched(self, results):
+        for result in results:
+            if result in self.dbList:
+                self.dbList.remove(result)    
 
     def __init__(self):
         super(Export, self).__init__()
