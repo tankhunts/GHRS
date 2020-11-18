@@ -46,10 +46,11 @@ class Export(QWidget):
         
     def add_profile(self, db_entry):
         self.dbList.append(db_entry)
+        self.begin_search()    
     
     def remove_profile(self, db_entry):
         self.dbList.remove(db_entry)
-        
+        self.begin_search()     
         
     def create_result_add(self, name, age, db_entry):
         layout = QHBoxLayout()
