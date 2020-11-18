@@ -9,6 +9,7 @@ from menu import MainMenu
 from searchNotes import searchNotes
 from profileEditor import ProfileEditor
 from viewnote import ViewNote
+from Export import Export
 
 app.setStyle('Fusion')
 class GHRS(QWidget):
@@ -17,6 +18,7 @@ class GHRS(QWidget):
     edit = ProfileEditor()
     searchNote = searchNotes()
     viewNote = ViewNote()
+    export = Export()
     def goAdd(self):
         return
     def goSearch(self):
@@ -57,6 +59,8 @@ class GHRS(QWidget):
         self.viewNote.note.setText(noteDict["Note"])
         self.viewNote.subject.setText(noteDict["Subject"])
         self.stacked.setCurrentIndex(4)
+    def goExport(self):
+        self.stacked.setCurrentIndex(5)
     def __init__(self):
         super(GHRS, self).__init__()
         search = Searching()
@@ -66,12 +70,14 @@ class GHRS(QWidget):
         self.stacked.addWidget(self.view)
         self.stacked.addWidget(self.searchNote)
         self.stacked.addWidget(self.viewNote)
+        self.stacked.addWidget(self.export)
         menu.add.connect(self.goAdd)
         menu.search.connect(self.goSearch)
+        menu.export.connect(self.goExport)
         search.ex.connect(self.goMenu) 
         search.op.connect(self.goView)
         self.view.ex.connect(self.goSearch)
-
+        
         self.view.noteSearch.connect(self.goNoteSearch)
 
         self.view.note.connect(self.newNote)
@@ -81,6 +87,8 @@ class GHRS(QWidget):
         self.searchNote.op.connect(self.editNote)
         self.view.sav.connect(self.edit.saveProfile)
         search.op.connect(self.view.setID)
+
+        self.export.ex.connect(self.goMenu)
     
         layout = QVBoxLayout()
         layout.addWidget(self.stacked)
