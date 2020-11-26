@@ -3,6 +3,7 @@ import pymongo
 from PyQt5.QtWidgets import (QWidget, QMainWindow, QStackedWidget, QApplication, QVBoxLayout)
 app = QApplication(sys.argv)
 from bson.objectid import ObjectId
+from Create_Profile import maker
 from Searching import Searching
 from viewer import ViewProfile
 from menu import MainMenu
@@ -19,8 +20,9 @@ class GHRS(QWidget):
     searchNote = searchNotes()
     viewNote = ViewNote()
     export = Export()
+    addProf = maker()
     def goAdd(self):
-        return
+        self.stacked.setCurrentIndex(6)
     def goSearch(self):
         self.stacked.setCurrentIndex(1)
     def goMenu(self):
@@ -71,11 +73,13 @@ class GHRS(QWidget):
         self.stacked.addWidget(self.searchNote)
         self.stacked.addWidget(self.viewNote)
         self.stacked.addWidget(self.export)
+        self.stacked.addWidget(self.addProf)
         menu.add.connect(self.goAdd)
         menu.search.connect(self.goSearch)
         menu.export.connect(self.goExport)
         search.ex.connect(self.goMenu) 
         search.op.connect(self.goView)
+
         self.view.ex.connect(self.goSearch)
         
         self.view.noteSearch.connect(self.goNoteSearch)
@@ -89,7 +93,9 @@ class GHRS(QWidget):
         search.op.connect(self.view.setID)
 
         self.export.ex.connect(self.goMenu)
-    
+        self.addProf.ex.connect(self.goMenu)
+        self.addProf.sav.connect(self.edit.saveProfile)
+
         layout = QVBoxLayout()
         layout.addWidget(self.stacked)
         self.setLayout(layout)
