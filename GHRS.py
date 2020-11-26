@@ -94,7 +94,7 @@ class GHRS(QWidget):
 
         self.export.ex.connect(self.goMenu)
         self.addProf.ex.connect(self.goMenu)
-        self.addProf.sav.connect(self.edit.saveProfile)
+        self.addProf.sav.connect(self.edit.addPatient)
 
         layout = QVBoxLayout()
         layout.addWidget(self.stacked)

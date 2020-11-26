@@ -14,9 +14,8 @@ class maker(QWidget):
     height = 1000
     width = 1000
     ex = pyqtSignal()
-    sav = pyqtSignal()
     note = pyqtSignal(str)
-    sav = pyqtSignal(str, list)
+    sav = pyqtSignal(list)
     currRecord = ''
     race = QLineEdit()
     DOB = QDateEdit()
@@ -39,13 +38,13 @@ class maker(QWidget):
     def notes(self):
         self.note.emit("")
     def save(self):
-        self.sav.emit(self.currID, self.getRecord())
+        self.sav.emit(self.getRecord())
         self.ex.emit()
 
     def getRecord(self):
         record = [
             self.name.text(),
-            str(self.DOB.date()),
+            str((self.DOB.date().toString())),
             self.race.text(),
             self.gender.text(),
             self.blood.text(),
