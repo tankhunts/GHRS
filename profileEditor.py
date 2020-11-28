@@ -1,5 +1,6 @@
 import pymongo
 from bson.objectid import ObjectId
+from datetime import date
 
 #TODO add note sections later on
 class ProfileEditor:
@@ -33,8 +34,10 @@ class ProfileEditor:
         addDict['Gender'] = record[3]
         addDict["Conditions"] = record[7]
         addDict["Perscriptions"] = ""
-        addDict["NotesTit"] = record[8]
-        addDict["Note"] = record[9]
+        if (record[8] != "" and record[9] != ""):
+            addDict["Notes"] = [{"Date": str(date.today()), "Note": record[9], "Subject": record[8]}]
+        #addDict["Notes"] = record[8]
+        #addDict["Note"] = record[9]
         self.mycol.insert_one(addDict)
 
     #TODO link with a delete option in the GUI
