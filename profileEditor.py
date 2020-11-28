@@ -44,4 +44,3 @@ class ProfileEditor:
     def deleteProfile(self, identifier):
         self.mycol.delete_one({'_id': ObjectId(identifier)})
 
-    
