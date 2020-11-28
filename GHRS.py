@@ -58,7 +58,6 @@ class GHRS(QWidget):
         self.viewNote.prof_id = id
         self.stacked.setCurrentIndex(4)
     def editNote(self, noteDict):
-        print(self.searchNote.currId)
         self.viewNote.prof_id = self.searchNote.currId
         self.searchNote.clear()
         self.viewNote.oldDict = noteDict
