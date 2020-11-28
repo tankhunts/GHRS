@@ -36,6 +36,8 @@ class ProfileEditor:
         addDict["Perscriptions"] = ""
         if (record[8] != "" and record[9] != ""):
             addDict["Notes"] = [{"Date": str(date.today()), "Note": record[9], "Subject": record[8]}]
+        else:
+            addDict["Notes"] = []
         #addDict["Notes"] = record[8]
         #addDict["Note"] = record[9]
         self.mycol.insert_one(addDict)
