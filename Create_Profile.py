@@ -10,33 +10,101 @@ from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidg
 from PyQt5.QtCore import *
 from PyQt5 import QtGui
 
+
+class NotesPopup(QWidget):
+    name = QLineEdit()
+    addProfile = QGroupBox("Notes:")
+    notes = QTextEdit()
+    name.setPlaceholderText("Name of Note")
+    notes.setPlaceholderText("Type Notes Here")
+
+    exPop = pyqtSignal()
+    note = pyqtSignal(list)
+
+    def cancel(self):
+        self.close()
+
+    def savingNote(self):
+        self.note.emit(self.getNotes())
+        self.close()
+
+    def getNotes(self):
+        record = [
+            self.name.text(),
+            self.notes.toPlainText()
+        ]
+        return record
+
+    def updateFields(self, initNote):
+        self.notes.setText(initNote[0])
+        self.name.setText(initNote[1])
+
+    def __init__(self):
+        QWidget.__init__(self)
+
+        saveNote = QPushButton("Save Note")
+        back = QPushButton("Cancel")
+
+        saveNote.clicked.connect(self.savingNote)
+        back.clicked.connect(self.cancel)
+
+        mainLayout = QGridLayout()
+        overallLayout = QVBoxLayout()
+
+        overallLayout.addWidget(self.name)
+        overallLayout.addWidget(self.notes)
+        self.addProfile.setLayout(overallLayout)
+
+        buttonLayout = QHBoxLayout()
+        buttonLayout.addWidget(back)
+        buttonLayout.addWidget(saveNote)
+
+        mainLayout.addWidget(self.addProfile)
+
+        mainLayout.addWidget(saveNote)
+        mainLayout.addWidget(back)
+
+        self.setLayout(mainLayout)
+
+
 class maker(QWidget):
     height = 1000
     width = 1000
     ex = pyqtSignal()
-    note = pyqtSignal(str)
     sav = pyqtSignal(list)
     currRecord = ''
     race = QLineEdit()
-    DOB = QDateEdit()
-    DOB.setDisplayFormat("MM/dd/yyyy")
-    DOB.setBaseSize(race.size())
-    DOB.setSizePolicy(race.sizePolicy())
+    DOB = QLineEdit()
+    #DOB = QDateEdit()
+    #DOB.setDisplayFormat("MM/dd/yyyy")
+    #DOB.setBaseSize(race.size())
+    #DOB.setSizePolicy(race.sizePolicy())
+
 
     gender = QLineEdit()
     blood = QLineEdit()
     company = QLineEdit()
     ID = QLineEdit()
     conditions = QTextEdit()
-    Prescriptions = QTextEdit()
+    #Prescriptions = QTextEdit()
     name = QLineEdit()
+    notes = ["", ""]
+
+    noteMaker = NotesPopup()
+
+
 
     addProfile = QGroupBox("Add Profile")
 
     def back(self):
         self.ex.emit()
-    def notes(self):
-        self.note.emit("")
+    def addNotes(self):
+        self.noteMaker.updateFields(self.notes)
+        self.noteMaker.setGeometry(self.geometry())
+        self.noteMaker.show()
+
+    def updateNote(self, newNote):
+        self.notes = newNote
     def save(self):
         self.sav.emit(self.getRecord())
         self.ex.emit()
@@ -44,12 +112,17 @@ class maker(QWidget):
     def getRecord(self):
         record = [
             self.name.text(),
-            str((self.DOB.date().toString())),
+            self.DOB.text(),
+            #str((self.DOB.date().toString())),
             self.race.text(),
             self.gender.text(),
             self.blood.text(),
             self.company.text(),
-            self.ID.text()]
+            self.ID.text(),
+            self.conditions.toPlainText(),
+            self.notes[0],
+            self.notes[1]
+            ]
             #TODO add notes sections
         return record
     def __init__(self):
@@ -63,7 +136,9 @@ class maker(QWidget):
         top.addWidget(save)
 
         back.clicked.connect(self.back)
+        nnote.clicked.connect(self.addNotes)
         save.clicked.connect(self.save)
+        self.noteMaker.note.connect(self.updateNote)
 
         mid = QHBoxLayout()
         mid.setAlignment(Qt.AlignCenter)

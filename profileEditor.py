@@ -31,8 +31,11 @@ class ProfileEditor:
         addDict["Race"] = record[2]
         addDict['Blood Type'] = record[4]
         addDict['Gender'] = record[3]
+        addDict["Conditions"] = record[7]
+        addDict["Perscriptions"] = ""
+        addDict["NotesTit"] = record[8]
+        addDict["Note"] = record[9]
         self.mycol.insert_one(addDict)
-
 
     #TODO link with a delete option in the GUI
     def deleteProfile(self, identifier):
