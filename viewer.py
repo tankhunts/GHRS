@@ -11,6 +11,7 @@ class ViewProfile(QWidget):
     note = pyqtSignal(str)
     sav = pyqtSignal(str, list)
     noteSearch = pyqtSignal(str)
+    manage = pyqtSignal(str)
     currRecord = ''
     DOB = QLineEdit()
     race = QLineEdit()
@@ -34,6 +35,9 @@ class ViewProfile(QWidget):
         self.sav.emit(self.currID, self.getRecord())
     def setID(self, identifier):
         self.currID = identifier
+    
+    def managePerscriptions(self):
+        self.manage.emit(self.currID)
 
     def getRecord(self):
         record = [
@@ -65,6 +69,7 @@ class ViewProfile(QWidget):
         notes.clicked.connect(self.notesSearch)
         nnote.clicked.connect(self.notes)
         save.clicked.connect(self.save)
+        perscription.clicked.connect(self.managePerscriptions)
 
 
         mid = QHBoxLayout()

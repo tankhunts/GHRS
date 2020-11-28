@@ -10,6 +10,8 @@ from searchNotes import searchNotes
 from profileEditor import ProfileEditor
 from viewnote import ViewNote
 from Export import Export
+from manage import Manage
+from drug_search import DrugSearch
 
 app.setStyle('Fusion')
 class GHRS(QWidget):
@@ -19,6 +21,9 @@ class GHRS(QWidget):
     searchNote = searchNotes()
     viewNote = ViewNote()
     export = Export()
+    man = Manage()
+    drugSearch = DrugSearch()
+
     def goAdd(self):
         return
     def goSearch(self):
@@ -61,6 +66,13 @@ class GHRS(QWidget):
         self.stacked.setCurrentIndex(4)
     def goExport(self):
         self.stacked.setCurrentIndex(5)
+
+    def goManage(self, identifier):
+        self.stacked.setCurrentIndex(6)
+    def goDrugSearch(self):
+        self.stacked.setCurrentIndex(7)
+
+
     def __init__(self):
         super(GHRS, self).__init__()
         search = Searching()
@@ -71,6 +83,9 @@ class GHRS(QWidget):
         self.stacked.addWidget(self.searchNote)
         self.stacked.addWidget(self.viewNote)
         self.stacked.addWidget(self.export)
+        self.stacked.addWidget(self.man)
+        self.stacked.addWidget(self.drugSearch)
+
         menu.add.connect(self.goAdd)
         menu.search.connect(self.goSearch)
         menu.export.connect(self.goExport)
@@ -87,9 +102,15 @@ class GHRS(QWidget):
         self.searchNote.op.connect(self.editNote)
         self.view.sav.connect(self.edit.saveProfile)
         search.op.connect(self.view.setID)
-
+        self.view.manage.connect(self.goManage)
+        self.man.drug_search.connect(self.goDrugSearch)
+        search.op.connect(self.man.setID)
+        search.op.connect(self.drugSearch.setID)
+        self.man.go_back.connect(self.goView)
         self.export.ex.connect(self.goMenu)
-    
+        self.drugSearch.go_back.connect(self.goManage)
+        
+        
         layout = QVBoxLayout()
         layout.addWidget(self.stacked)
         self.setLayout(layout)
