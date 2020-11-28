@@ -3,6 +3,8 @@
 import sys
 from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea, QTextEdit)
 from PyQt5.QtCore import *
+from bson.objectid import ObjectId
+import pymongo
 
 class ViewProfile(QWidget):
     height = 1000
@@ -39,6 +41,18 @@ class ViewProfile(QWidget):
     def managePerscriptions(self):
         self.manage.emit(self.currID)
 
+    def showPrescriptions(self):
+        myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+        mydb = myclient["GHRS"]
+        mycol = mydb["PatientData"]
+        record = mycol.find_one({'_id': ObjectId(self.currRecord)})
+        self.Perscriptions.clear()
+        if "Perscriptions" not in record:
+            return
+        for p in record["Perscriptions"]:
+            self.Perscriptions.append(p["strength"] + "  " + p["status"])
+            self.Perscriptions.append("\n")
+        
     def getRecord(self):
         record = [
             self.name.text(),

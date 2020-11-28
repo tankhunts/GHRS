@@ -43,7 +43,6 @@ while i < toGen:
     myDict['Blood Type'] = blood[random.randrange(8)]
     myDict['Gender'] = gender[random.randrange(10)]
     myDict["Conditions"] = ''
-    myDict["Perscriptions"] = ''
     mycol.insert_one(myDict)
     i+=1
 
