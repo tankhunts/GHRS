@@ -47,7 +47,7 @@ class GHRS(QWidget):
         self.view.company.setText(record["Insurance"])
         self.view.ID.setText(record["ID"])
         self.view.conditions.setText(record["Conditions"])
-        self.view.Perscriptions.setText(record["Perscriptions"])
+        self.view.showPrescriptions()
         self.stacked.setCurrentIndex(2)
     def goNoteSearch(self, id):
         self.searchNote.currId = id
@@ -70,6 +70,12 @@ class GHRS(QWidget):
         self.stacked.setCurrentIndex(5)
 
     def goManage(self, identifier):
+        myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+        mydb = myclient["GHRS"]
+        mycol = mydb["PatientData"]
+        record = mycol.find_one({'_id': ObjectId(identifier)})
+        #self.man.prescriptions = record["Perscriptions"]
+        self.man.showPrescriptions()
         self.stacked.setCurrentIndex(6)
     def goDrugSearch(self):
         self.stacked.setCurrentIndex(7)
