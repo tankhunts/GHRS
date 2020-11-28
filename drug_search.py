@@ -48,6 +48,8 @@ class DrugSearch(QWidget):
         mydb = myclient["GHRS"]
         mycol = mydb["PatientData"]
         i = int(self.res_num.value() - 1)
+        if i < 0 or i > len(self.query_res) - 1:
+            return
         json_dict = json.loads(self.query_res[i])
         mycol.update({'_id': ObjectId(self.currID)}, {"$push": { "Perscriptions": { "id"        : json_dict["id"], 
                                                                                     "strength"  : json_dict["spl_strength"],
