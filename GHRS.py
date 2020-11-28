@@ -12,6 +12,7 @@ from viewnote import ViewNote
 from Export import Export
 from manage import Manage
 from drug_search import DrugSearch
+from Create_Profile import maker
 
 app.setStyle('Fusion')
 class GHRS(QWidget):
@@ -23,9 +24,10 @@ class GHRS(QWidget):
     export = Export()
     man = Manage()
     drugSearch = DrugSearch()
+    addProf = maker()
 
     def goAdd(self):
-        return
+        self.stacked.setCurrentIndex(8)
     def goSearch(self):
         self.stacked.setCurrentIndex(1)
     def goMenu(self):
@@ -91,6 +93,7 @@ class GHRS(QWidget):
         self.stacked.addWidget(self.export)
         self.stacked.addWidget(self.man)
         self.stacked.addWidget(self.drugSearch)
+        self.stacked.addWidget(self.addProf)
 
         menu.add.connect(self.goAdd)
         menu.search.connect(self.goSearch)
@@ -98,6 +101,9 @@ class GHRS(QWidget):
         search.ex.connect(self.goMenu) 
         search.op.connect(self.goView)
         self.view.ex.connect(self.goSearch)
+
+        self.addProf.ex.connect(self.goMenu)
+        self.addProf.sav.connect(self.edit.addPatient)
         
         self.view.noteSearch.connect(self.goNoteSearch)
 

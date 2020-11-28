@@ -15,6 +15,7 @@ class ViewNote(QWidget):
     date = ''
     oldDict={}
 
+
     def back(self):
         self.clear()
         self.ret.emit()
