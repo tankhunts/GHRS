@@ -33,7 +33,7 @@ class ProfileEditor:
         addDict['Blood Type'] = record[4]
         addDict['Gender'] = record[3]
         addDict["Conditions"] = record[7]
-        addDict["Perscriptions"] = ""
+        addDict["Perscriptions"] = []
         if (record[8] != "" and record[9] != ""):
             addDict["Notes"] = [{"Date": str(date.today()), "Note": record[9], "Subject": record[8]}]
         else:
