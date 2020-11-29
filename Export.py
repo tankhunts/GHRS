@@ -7,9 +7,10 @@ Created on Wed Sep 23 20:57:53 2020
 import pymongo
 import csv
 import sys
-from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea)
-from PyQt5.QtCore import pyqtSignal
-
+import pathlib
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 class Export(QWidget):
     
@@ -142,9 +143,11 @@ class Export(QWidget):
         self.begin_search() 
 
     def exporter(self):
+        filename = QFileDialog.getSaveFileName(self, "Save file", str(pathlib.Path().absolute()), "*.csv")
+        print(str(filename[0]))
         if self.dbList:
             try:
-                with open("Database.csv", 'w') as file:
+                with open(str(filename[0]), 'w') as file:
                     keys = self.dbList[0].keys()
                     writer = csv.DictWriter(file, fieldnames=keys)
                     writer.writeheader()
