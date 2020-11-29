@@ -80,12 +80,11 @@ class DrugSearch(QWidget):
         allergies = mycol.find_one({'_id': ObjectId(self.currID)})["Conditions"].split("\n")
         allergic = False
         for allergy in allergies:
-            for ingredient in self.ingredients[i]:
-                print(allergy)
-                print(ingredient)
-                if allergy.lower() in ingredient.lower():
-                    allergic = True
-                    break
+            if allergy != '':
+                for ingredient in self.ingredients[i]:
+                    if allergy.lower() in ingredient.lower():
+                        allergic = True
+                        break
             if(allergic):
                 break
         if allergic:
