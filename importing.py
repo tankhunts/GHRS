@@ -2,6 +2,8 @@ import csv
 import pymongo
 
 def readFile(filename):
+    if str(filename[0]) == '':
+        return
     myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
     mydb = myclient["GHRS"]
     mycol = mydb["PatientData"]
