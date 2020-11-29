@@ -1,7 +1,7 @@
 
 
 import sys
-from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea, QTextEdit)
+from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea, QTextEdit, QGroupBox)
 from PyQt5.QtCore import pyqtSignal
 from datetime import date
 from bson.objectid import ObjectId
@@ -14,6 +14,8 @@ class ViewNote(QWidget):
     prof_id = ''
     date = ''
     oldDict={}
+
+    addNote = QGroupBox("Note:")
 
 
     def back(self):
@@ -48,10 +50,16 @@ class ViewNote(QWidget):
         overallLayout = QVBoxLayout()
         overallLayout.addWidget(self.subject)
         overallLayout.addWidget(self.note)
-        overallLayout.addLayout(bottom)
+
 
         back.clicked.connect(self.back)
         save.clicked.connect(self.save)
 
-        self.setLayout(overallLayout)
+        mainLayout = QVBoxLayout()
+        self.addNote.setLayout(overallLayout)
+        mainLayout.addWidget(self.addNote)
+
+        mainLayout.addLayout(bottom)
+
+        self.setLayout(mainLayout)
 
