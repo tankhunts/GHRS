@@ -7,9 +7,56 @@ from PyQt5 import (QtGui)
 from bson.objectid import ObjectId
 import pymongo
 
+class WarningPopup(QWidget):
+
+    name = QLineEdit()
+    addProfile = QGroupBox("Delete Profile:")
+    warn = QTextEdit("Are you sure you want to delete this profile?")
+
+    warn.isReadOnly()
+
+    exPop = pyqtSignal()
+    confirmed = pyqtSignal()
+    def delete(self):
+        self.confirmed.emit()
+        self.close()
+    def cancel(self):
+        self.close()
+
+    def __init__(self):
+        QWidget.__init__(self)
+        self.setWindowTitle("WARNING: Deleting Profile")
+
+        confirm = QPushButton("Delete")
+        back = QPushButton("Cancel")
+
+        confirm.clicked.connect(self.delete)
+        back.clicked.connect(self.cancel)
+        descPal = QtGui.QPalette()
+        descPal.setColor(QtGui.QPalette.Text, Qt.red)
+        self.warn.setPalette(descPal)
+
+        mainLayout = QVBoxLayout()
+        overallLayout = QVBoxLayout()
+
+        overallLayout.addWidget(self.warn)
+        self.addProfile.setLayout(overallLayout)
+
+        buttonLayout = QHBoxLayout()
+        buttonLayout.addWidget(confirm)
+        buttonLayout.addWidget(back)
+
+        mainLayout.addWidget(self.addProfile)
+
+        mainLayout.addLayout(buttonLayout)
+
+        self.setLayout(mainLayout)
+
+
 class ViewProfile(QWidget):
     height = 1000
     width = 1000
+    dele = pyqtSignal(str)
     ex = pyqtSignal()
     note = pyqtSignal(str)
     sav = pyqtSignal(str, list)
@@ -17,7 +64,10 @@ class ViewProfile(QWidget):
     manage = pyqtSignal(str)
     currRecord = ''
 
+    delete_warning = WarningPopup()
+
     gender = QLineEdit()
+
 
     #race = QLineEdit()
     race = QComboBox()
@@ -47,6 +97,11 @@ class ViewProfile(QWidget):
 
     editProfile = QGroupBox("View/Edit Profile:")
 
+    def warn(self):
+        self.delete_warning.show()
+    def delete(self):
+        self.dele.emit(self.currID)
+        self.ex.emit()
     def back(self):
         self.ex.emit()
     def notes(self):
@@ -89,20 +144,25 @@ class ViewProfile(QWidget):
     def __init__(self):
         super(ViewProfile, self).__init__()
         back = QPushButton("Back")
-        notes = QPushButton("Search Notes") 
-        nnote = QPushButton("Add note")
+        notes = QPushButton("Notes")
+        #nnote = QPushButton("Add note")
         perscription = QPushButton("Manage Perscriptions")
         save = QPushButton("Save Changes")
+        delete_but = QPushButton("Delete Profile")
+        toppest = QHBoxLayout()
+        toppest.addWidget(back)
+        toppest.addWidget(save)
         top = QHBoxLayout()
-        top.addWidget(back)
         top.addWidget(perscription)
         top.addWidget(notes)
-        top.addWidget(nnote)
-        top.addWidget(save)
+        #top.addWidget(nnote)
+        top.addWidget(delete_but)
 
         back.clicked.connect(self.back)
         notes.clicked.connect(self.notesSearch)
-        nnote.clicked.connect(self.notes)
+        #nnote.clicked.connect(self.notes)
+        delete_but.clicked.connect(self.warn)
+
         save.clicked.connect(self.save)
         perscription.clicked.connect(self.managePerscriptions)
 
@@ -134,7 +194,7 @@ class ViewProfile(QWidget):
         nameDesc.setAlignment(Qt.AlignCenter)
         nameDesc.setReadOnly(True)
 
-        dateDesc = QLineEdit("Date of Birth")
+        dateDesc = QLineEdit("Date of Birth (YYYY-MM-DD)")
         dateDesc.setPalette(descPal)
         dateDesc.setFrame(False)
         dateDesc.setAlignment(Qt.AlignCenter)
@@ -212,6 +272,9 @@ class ViewProfile(QWidget):
         self.editProfile.setLayout(overallLayout)
         mainLayout.addWidget(self.editProfile)
         mainLayout.addLayout(top)
+        mainLayout.addLayout((toppest))
+
+        self.delete_warning.confirmed.connect(self.delete)
 
         self.setLayout(mainLayout)
 

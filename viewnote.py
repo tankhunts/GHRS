@@ -9,18 +9,22 @@ import pymongo
 
 class ViewNote(QWidget):
     note = QTextEdit()
-    ret = pyqtSignal()
+    ret = pyqtSignal(str)
     subject = QLineEdit()
     prof_id = ''
     date = ''
     oldDict={}
 
+    subject.setPlaceholderText("Name of Note")
+    note.setPlaceholderText("Type Notes Here")
+
     addNote = QGroupBox("Note:")
 
 
     def back(self):
+        self.ret.emit(self.prof_id)
         self.clear()
-        self.ret.emit()
+
     def save(self):
         myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
         mydb = myclient["GHRS"]
@@ -28,10 +32,15 @@ class ViewNote(QWidget):
         if(self.date == ''):
             mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": str(date.today()), "Note": self.note.toPlainText(), "Subject": self.subject.text()}}})
         else:
-            mycol.update({'_id': ObjectId(self.prof_id)}, {"$push": {"Notes": {"Date": self.date, "Note": self.note.toPlainText(), "Subject": self.subject.text()}}})
-            mycol.update({'_id': ObjectId(self.prof_id)}, {"$pull": {"Notes": {"Date": self.oldDict["Date"], "Note": self.oldDict["Note"], "Subject": self.oldDict["Subject"]}}})
+            id = ObjectId(self.prof_id)
+
+            mycol.update({'_id': id}, {"$pull": {"Notes": {"Date": self.oldDict["Date"], "Note": self.oldDict["Note"],
+                                                           "Subject": self.oldDict["Subject"]}}})
+            mycol.update({'_id': id}, {"$push": {
+                "Notes": {"Date": self.date, "Note": self.note.toPlainText(), "Subject": self.subject.text()}}})
+        self.ret.emit(self.prof_id)
         self.clear()
-        self.ret.emit()
+
     def clear(self):
         self.note.clear()
         self.date = ''
@@ -50,7 +59,6 @@ class ViewNote(QWidget):
         overallLayout = QVBoxLayout()
         overallLayout.addWidget(self.subject)
         overallLayout.addWidget(self.note)
-
 
         back.clicked.connect(self.back)
         save.clicked.connect(self.save)

@@ -20,12 +20,16 @@ class ProfileEditor:
                                   'Blood Type' : record[4],
                                   'Gender'     : record[3]}})
 
-    #TODO link with add patient page
     def addPatient(self, record):
-        firstLast = record[0].split()
         addDict = {}
-        addDict["First Name"] = firstLast[0]
-        addDict["Last Name"] = firstLast[1]
+        if (' ' in record[0]):
+            firstLast = record[0].split()
+
+            addDict["First Name"] = firstLast[0]
+            addDict["Last Name"] = firstLast[1]
+        else:
+            addDict["First Name"] = record[0]
+            addDict["Last Name"] = record[0]
         addDict["DOB"] = record[1]
         addDict["Insurance"] = record[5]
         addDict["ID"] = record[6]

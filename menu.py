@@ -14,7 +14,7 @@ class MainMenu(QWidget):
     optionsLayout = QHBoxLayout()
     nameLabel = QLabel()
     mainLayout = QVBoxLayout(mainWidget)
-    
+
     #main menu buttons
     addPatientButton = QPushButton('Add patient')
     searchButton = QPushButton('Search for a profile')
@@ -33,6 +33,7 @@ class MainMenu(QWidget):
     def __init__(self, parent=None):
         super().__init__() 
         #creating window
+
         self.nameLabel.setText(self.name)
         self.nameLabel.setAlignment(Qt.AlignCenter)
         self.setWindowTitle(self.title)

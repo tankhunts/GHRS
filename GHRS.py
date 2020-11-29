@@ -55,15 +55,17 @@ class GHRS(QWidget):
         self.view.showPrescriptions()
         self.stacked.setCurrentIndex(2)
     def goNoteSearch(self, id):
+        print(id)
         self.searchNote.currId = id
         self.stacked.setCurrentIndex(3)
     def returnView(self):
         self.stacked.setCurrentIndex(2)
     def newNote(self, id):
+        #print("are you winning son")
         self.viewNote.prof_id = id
         self.stacked.setCurrentIndex(4)
-    def editNote(self, noteDict):
-        self.viewNote.prof_id = self.searchNote.currId
+    def editNote(self, noteDict, id):
+        self.viewNote.prof_id = id
         self.searchNote.clear()
         self.viewNote.oldDict = noteDict
         self.viewNote.date = noteDict["Date"]
@@ -87,6 +89,7 @@ class GHRS(QWidget):
 
     def __init__(self):
         super(GHRS, self).__init__()
+        self.setWindowTitle("GHRS - RLA")
         search = Searching()
         menu = MainMenu()
         self.stacked.addWidget(menu)
@@ -110,11 +113,13 @@ class GHRS(QWidget):
         self.addProf.sav.connect(self.edit.addPatient)
         
         self.view.noteSearch.connect(self.goNoteSearch)
-
-        self.view.note.connect(self.newNote)
+        self.view.dele.connect(self.edit.deleteProfile)
+        self.view.dele.connect(search.begin_search)
+        self.searchNote.adding_note.connect(self.newNote)
+        self.viewNote.ret.connect(self.goNoteSearch)
 
         self.searchNote.ex.connect(self.returnView)
-        self.viewNote.ret.connect(self.returnView)
+        #self.viewNote.ret.connect(self.returnView)
         self.searchNote.op.connect(self.editNote)
         self.view.sav.connect(self.edit.saveProfile)
         search.op.connect(self.view.setID)

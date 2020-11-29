@@ -106,6 +106,7 @@ class maker(QWidget):
     addProfile = QGroupBox("Add Profile")
 
     def back(self):
+        self.clear()
         self.ex.emit()
 
     def addNotes(self):
@@ -118,7 +119,20 @@ class maker(QWidget):
 
     def save(self):
         self.sav.emit(self.getRecord())
+        self.clear()
         self.ex.emit()
+
+    def clear(self):
+        self.name.clear(),
+        self.DOB.setDate(QDate(2000,1,1)),
+        self.race.setCurrentIndex(0),
+        # str(self.gender.currentText()),
+        self.gender.clear(),
+        self.blood.setCurrentIndex(0),
+        self.company.clear(),
+        self.ID.clear(),
+        self.conditions.clear(),
+        self.notes = ["", ""]
 
     def getRecord(self):
         QDate_ofBirth = self.DOB.date()
@@ -127,7 +141,6 @@ class maker(QWidget):
             # self.DOB.text(),
             QDate_ofBirth.toString("yyyy-MM-dd"),
             str(self.race.currentText()),
-            #str(self.gender.currentText()),
             self.gender.text(),
             str(self.blood.currentText()),
             self.company.text(),
@@ -136,7 +149,7 @@ class maker(QWidget):
             self.notes[0],
             self.notes[1]
         ]
-        # TODO add notes sections
+        print(record)
         return record
 
     def __init__(self):
@@ -183,7 +196,7 @@ class maker(QWidget):
         nameDesc.setAlignment(Qt.AlignCenter)
         nameDesc.setReadOnly(True)
 
-        dateDesc = QLineEdit("Date of Birth (MM/DD/YYYY)")
+        dateDesc = QLineEdit("Date of Birth (YYYY-MM-DD)")
         dateDesc.setFrame(False)
         dateDesc.setPalette(descPal)
         dateDesc.setAutoFillBackground(True)

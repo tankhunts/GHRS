@@ -20,7 +20,7 @@ class Searching(QWidget):
     title = QGroupBox("Searching Profiles")
     ex = pyqtSignal()
     op = pyqtSignal(str)
-    comboData = ["First Name", "Last Name", "Full Name", "DOB", "Keyword"]
+    comboData = ["First Name", "Last Name", "Full Name", "DOB", "ID", "Keyword"]
 
     def return_search_results(self, criteria, text):
         results = []
@@ -31,14 +31,25 @@ class Searching(QWidget):
         if(text == ''):
             mongodbIter = mycol.find()
         else:
-            if(criteria != 'Full Name'):
-                myquery = {criteria: {"$regex": "^"+text, "$options": "-i"}}
+            if (criteria == "Keyword"):
+                myquery = {"$or": [{"Race": {"$regex": "^" + text, "$options": "-i"}},
+                                   {"Blood Type": {"$regex": "^" + text, "$options": "-i"}},
+                                   {"Gender": {"$regex": "^" + text, "$options": "-i"}},
+                                   {"Conditions": {"$regex": "^" + text, "$options": "-i"}}
+                                   ]}
+            elif(criteria != 'Full Name'):
+                if (criteria == "ID"):
+                    myquery = {criteria: {"$regex": "^" + text}}
+                else:
+                    myquery = {criteria: {"$regex": "^"+text, "$options": "-i"}}
             else:
                 myquery = {"$or": [{"First Name": {"$regex": "^"+text, "$options": "-i"}}, {"Last Name": {"$regex": "^"+text, "$options": "-i"}}]}
             mongodbIter = mycol.find(myquery)
         for item in mongodbIter:
             results.append(item)
-        if(criteria != 'Full Name'):
+        if(criteria == 'Keyword'):
+            results = sorted(results, key=lambda i: i["First Name"])
+        elif(criteria != 'Full Name'):
             results = sorted(results, key = lambda i: i[criteria])
         else:
             results = sorted(results, key = lambda i: i["First Name"])
