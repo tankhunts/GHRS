@@ -1,6 +1,9 @@
 import sys
 import pymongo
-from PyQt5.QtWidgets import (QWidget, QMainWindow, QStackedWidget, QApplication, QVBoxLayout)
+from PyQt5.QtWidgets import (QWidget , QMainWindow, QStackedWidget, QApplication, QVBoxLayout)
+from PyQt5 import QtCore
+from PyQt5.QtCore import (QDate)
+
 app = QApplication(sys.argv)
 from bson.objectid import ObjectId
 from Searching import Searching
@@ -40,10 +43,12 @@ class GHRS(QWidget):
         mycol = mydb["PatientData"]
         record = mycol.find_one({'_id': ObjectId(identifier)})
         self.view.name.setText(record['First Name'] + ' ' + record['Last Name'])
-        self.view.DOB.setText(record["DOB"])
-        self.view.race.setText(record["Race"])
+        self.view.DOB.setDate(QDate.fromString(record["DOB"], "yyyy-MM-dd"))
+        self.view.race.setCurrentIndex(self.view.race.findText(record["Race"]))
+            #self.view.race.setText(record["Race"])
         self.view.gender.setText(record["Gender"])
-        self.view.blood.setText(record["Blood Type"])
+        self.view.blood.setCurrentIndex(self.view.blood.findText(record["Blood Type"]))
+            #self.view.blood.setText(record["Blood Type"])
         self.view.company.setText(record["Insurance"])
         self.view.ID.setText(record["ID"])
         self.view.conditions.setText(record["Conditions"])

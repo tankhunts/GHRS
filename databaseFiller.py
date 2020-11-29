@@ -9,7 +9,7 @@ myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
 mydb = myclient["GHRS"]
 blood = ["A+", "AB+", "B+", "O+", "A-", "AB-", "B-", "O-"]
 gender = ['Male', 'Female', 'Transgender', 'Gender Neutral', "Non-binary", 'Agender', 'Pangender', 'Genderqueer', 'Genderfluid', 'Perfer not to say']
-Race = ["American Indian", "Asian", "Black", "Hispanic", "Native Hawiian", "White"]
+Race = ["American Indian", "Asian", "Black", "Hispanic", "Native Hawaiian", "White"]
 insurance = ["Anthem", "Aetna", "United", "Cigna", "Medicare"]
 mycol = mydb["PatientData"]
 first = open("first-names.txt", "r")
@@ -43,6 +43,7 @@ while i < toGen:
     myDict['Blood Type'] = blood[random.randrange(8)]
     myDict['Gender'] = gender[random.randrange(10)]
     myDict["Conditions"] = ''
+    myDict["Notes"] = []
     mycol.insert_one(myDict)
     i+=1
 

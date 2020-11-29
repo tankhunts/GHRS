@@ -1,8 +1,9 @@
 
 
 import sys
-from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea, QTextEdit)
+from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout,QDateEdit, QLineEdit, QVBoxLayout, QScrollArea, QTextEdit, QGridLayout, QGroupBox)
 from PyQt5.QtCore import *
+from PyQt5 import (QtGui)
 from bson.objectid import ObjectId
 import pymongo
 
@@ -15,17 +16,36 @@ class ViewProfile(QWidget):
     noteSearch = pyqtSignal(str)
     manage = pyqtSignal(str)
     currRecord = ''
-    DOB = QLineEdit()
-    race = QLineEdit()
+
     gender = QLineEdit()
-    blood = QLineEdit()
+
+    #race = QLineEdit()
+    race = QComboBox()
+    race.setBaseSize(gender.size())
+    race.setSizePolicy(gender.sizePolicy())
+
+    DOB = QDateEdit()
+    DOB.setDisplayFormat("yyyy-MM-dd")
+    DOB.setBaseSize(gender.size())
+    DOB.setSizePolicy(gender.sizePolicy())
+
+    #blood = QLineEdit()
+    blood = QComboBox()
+    blood.setBaseSize(gender.size())
+    blood.setSizePolicy(gender.sizePolicy())
+
     company = QLineEdit()
     ID = QLineEdit()
     conditions = QTextEdit()
     Perscriptions = QTextEdit() 
     name = QLineEdit()
 
+    bloodT = ["", "A+", "AB+", "B+", "O+", "A-", "AB-", "B-", "O-"]
+    raceT = ["", "American Indian", "Asian", "Black", "Hispanic", "Native Hawaiian", "White"]
+
     currID = ""
+
+    editProfile = QGroupBox("View/Edit Profile:")
 
     def back(self):
         self.ex.emit()
@@ -54,12 +74,13 @@ class ViewProfile(QWidget):
             self.Perscriptions.append("\n")
         
     def getRecord(self):
+        QDate_ofBirth = self.DOB.date()
         record = [
             self.name.text(),
-            self.DOB.text(),
-            self.race.text(),
-            self.gender.text(), 
-            self.blood.text(),
+            QDate_ofBirth.toString("yyyy-MM-dd"),
+            str(self.race.currentText()),
+            self.gender.text(),
+            str(self.blood.currentText()),
             self.company.text(),
             self.ID.text()]
             #TODO add notes sections
@@ -85,6 +106,8 @@ class ViewProfile(QWidget):
         save.clicked.connect(self.save)
         perscription.clicked.connect(self.managePerscriptions)
 
+        self.race.addItems(self.raceT)
+        self.blood.addItems(self.bloodT)
 
         mid = QHBoxLayout()
         mid.addWidget(self.DOB)
@@ -102,47 +125,59 @@ class ViewProfile(QWidget):
         bottomest.addWidget(self.conditions)
         bottomest.addWidget(self.Perscriptions)
 
+        descPal = QtGui.QPalette()
+        descPal.setColor(QtGui.QPalette.Base, Qt.lightGray)
+
         nameDesc = QLineEdit("Name")
+        nameDesc.setPalette(descPal)
         nameDesc.setFrame(False)
         nameDesc.setAlignment(Qt.AlignCenter)
         nameDesc.setReadOnly(True)
 
         dateDesc = QLineEdit("Date of Birth")
+        dateDesc.setPalette(descPal)
         dateDesc.setFrame(False)
         dateDesc.setAlignment(Qt.AlignCenter)
         dateDesc.setReadOnly(True)
 
         raceDesc = QLineEdit("Race")
+        raceDesc.setPalette(descPal)
         raceDesc.setFrame(False)
         raceDesc.setAlignment(Qt.AlignCenter)
         raceDesc.setReadOnly(True)
 
         genderDesc = QLineEdit("Gender")
+        genderDesc.setPalette(descPal)
         genderDesc.setFrame(False)
         genderDesc.setAlignment(Qt.AlignCenter)
         genderDesc.setReadOnly(True)
 
         bloodDesc = QLineEdit("Blood Type")
+        bloodDesc.setPalette(descPal)
         bloodDesc.setFrame(False)
         bloodDesc.setAlignment(Qt.AlignCenter)
         bloodDesc.setReadOnly(True)
 
         compDesc = QLineEdit("Insurance Provider")
+        compDesc.setPalette(descPal)
         compDesc.setFrame(False)
         compDesc.setAlignment(Qt.AlignCenter)
         compDesc.setReadOnly(True)
 
         IDDesc = QLineEdit("Insurance Identification")
+        IDDesc.setPalette(descPal)
         IDDesc.setFrame(False)
         IDDesc.setAlignment(Qt.AlignCenter)
         IDDesc.setReadOnly(True)
 
         condDesc = QLineEdit("Allergies")
+        condDesc.setPalette(descPal)
         condDesc.setFrame(False)
         condDesc.setAlignment(Qt.AlignCenter)
         condDesc.setReadOnly(True)
 
         perscDesc = QLineEdit("Perscriptions")
+        perscDesc.setPalette(descPal)
         perscDesc.setFrame(False)
         perscDesc.setAlignment(Qt.AlignCenter)
         perscDesc.setReadOnly(True)
@@ -171,7 +206,12 @@ class ViewProfile(QWidget):
         overallLayout.addLayout(bot)
         overallLayout.addLayout(descThree)
         overallLayout.addLayout(bottomest)
-        overallLayout.addLayout(top)
 
-        self.setLayout(overallLayout)
+        mainLayout = QVBoxLayout()
+
+        self.editProfile.setLayout(overallLayout)
+        mainLayout.addWidget(self.editProfile)
+        mainLayout.addLayout(top)
+
+        self.setLayout(mainLayout)
 

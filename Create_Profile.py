@@ -4,9 +4,9 @@ from PyQt5.QtCore import *
 
 app = QApplication([])
 
-
 import sys
-from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea, QTextEdit)
+from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit,
+                             QVBoxLayout, QScrollArea, QTextEdit)
 from PyQt5.QtCore import *
 from PyQt5 import QtGui
 
@@ -73,31 +73,41 @@ class maker(QWidget):
     ex = pyqtSignal()
     sav = pyqtSignal(list)
     currRecord = ''
-    race = QLineEdit()
-    DOB = QLineEdit()
-    #DOB = QDateEdit()
-    #DOB.setDisplayFormat("MM/dd/yyyy")
-    #DOB.setBaseSize(race.size())
-    #DOB.setSizePolicy(race.sizePolicy())
-
-
+    # race = QLineEdit()
     gender = QLineEdit()
-    blood = QLineEdit()
+
+    race = QComboBox()
+    race.setBaseSize(gender.size())
+    race.setSizePolicy(gender.sizePolicy())
+
+    # DOB = QLineEdit()
+    DOB = QDateEdit()
+    DOB.setDisplayFormat("yyyy-MM-dd")
+    DOB.setBaseSize(gender.size())
+    DOB.setSizePolicy(gender.sizePolicy())
+
+    #blood = QLineEdit()
+    blood = QComboBox()
+    blood.setBaseSize(gender.size())
+    blood.setSizePolicy(gender.sizePolicy())
+
     company = QLineEdit()
     ID = QLineEdit()
     conditions = QTextEdit()
-    #Prescriptions = QTextEdit()
+    # Prescriptions = QTextEdit()
     name = QLineEdit()
     notes = ["", ""]
 
+    bloodT = ["", "A+", "AB+", "B+", "O+", "A-", "AB-", "B-", "O-"]
+    raceT = ["", "American Indian", "Asian", "Black", "Hispanic", "Native Hawaiian", "White"]
+
     noteMaker = NotesPopup()
-
-
 
     addProfile = QGroupBox("Add Profile")
 
     def back(self):
         self.ex.emit()
+
     def addNotes(self):
         self.noteMaker.updateFields(self.notes)
         self.noteMaker.setGeometry(self.geometry())
@@ -105,26 +115,30 @@ class maker(QWidget):
 
     def updateNote(self, newNote):
         self.notes = newNote
+
     def save(self):
         self.sav.emit(self.getRecord())
         self.ex.emit()
 
     def getRecord(self):
+        QDate_ofBirth = self.DOB.date()
         record = [
             self.name.text(),
-            self.DOB.text(),
-            #str((self.DOB.date().toString())),
-            self.race.text(),
+            # self.DOB.text(),
+            QDate_ofBirth.toString("yyyy-MM-dd"),
+            str(self.race.currentText()),
+            #str(self.gender.currentText()),
             self.gender.text(),
-            self.blood.text(),
+            str(self.blood.currentText()),
             self.company.text(),
             self.ID.text(),
             self.conditions.toPlainText(),
             self.notes[0],
             self.notes[1]
-            ]
-            #TODO add notes sections
+        ]
+        # TODO add notes sections
         return record
+
     def __init__(self):
         super(maker, self).__init__()
         back = QPushButton("Back")
@@ -134,6 +148,10 @@ class maker(QWidget):
         top.addWidget(back)
         top.addWidget(nnote)
         top.addWidget(save)
+
+        self.race.addItems(self.raceT)
+        self.blood.addItems(self.bloodT)
+        #self.gender.addItems(self.genderT)
 
         back.clicked.connect(self.back)
         nnote.clicked.connect(self.addNotes)
@@ -240,11 +258,12 @@ class maker(QWidget):
         overallLayout.addLayout(bot)
         overallLayout.addLayout(descThree)
         overallLayout.addLayout(bottomest)
-        overallLayout.addLayout(top)
 
-        mainLayout = QGridLayout()
+
+        mainLayout = QVBoxLayout()
 
         self.addProfile.setLayout(overallLayout)
         mainLayout.addWidget(self.addProfile)
+        mainLayout.addLayout(top)
 
         self.setLayout(mainLayout)

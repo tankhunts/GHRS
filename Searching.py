@@ -6,7 +6,7 @@ Created on Wed Sep 23 20:57:53 2020
 """
 import pymongo
 import sys
-from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea)
+from PyQt5.QtWidgets import (QComboBox, QApplication, QMainWindow, QLabel, QWidget, QPushButton, QHBoxLayout, QLineEdit, QVBoxLayout, QScrollArea, QGroupBox)
 from PyQt5.QtCore import pyqtSignal
 
 
@@ -17,9 +17,10 @@ class Searching(QWidget):
     criteria = QComboBox()
     search = QLineEdit()
     scrollData = QVBoxLayout()
+    title = QGroupBox("Searching Profiles")
     ex = pyqtSignal()
     op = pyqtSignal(str)
-    comboData = ["First Name", "Last Name", "Full Name", "DOB"]
+    comboData = ["First Name", "Last Name", "Full Name", "DOB", "Keyword"]
 
     def return_search_results(self, criteria, text):
         results = []
@@ -107,4 +108,8 @@ class Searching(QWidget):
         resultLayout.addLayout(barLayout)
         resultLayout.addWidget(scroll)
 
-        self.setLayout(resultLayout)
+        mainLayout = QVBoxLayout()
+        self.title.setLayout(resultLayout)
+        mainLayout.addWidget(self.title)
+
+        self.setLayout(mainLayout)
