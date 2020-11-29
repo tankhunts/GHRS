@@ -6,9 +6,37 @@ import json
 import pymongo
 from bson.objectid import ObjectId
 
+class MyPopup(QWidget):
+    forceAdd = pyqtSignal()
+
+    def __init__(self):
+        super(MyPopup, self).__init__()
+        text = QTextEdit("This prescription contains ingredients the patient is allergic to.")
+        back = QPushButton("Cancel")
+        add = QPushButton("Add anyway")
+
+        add.clicked.connect(self.force)
+        back.clicked.connect(self.hide)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(back)
+        button_layout.addWidget(add)
+
+        layout = QVBoxLayout()
+        layout.addWidget(text)
+        layout.addLayout(button_layout)
+        self.setLayout(layout)
+
+    def hide(self):
+        self.setVisible(False)
+    
+    def force(self):
+        self.setVisible(False)
+        self.forceAdd.emit()
+
 class DrugSearch(QWidget):
 
-    
+    popup = MyPopup()
     results = QTextEdit()
     query = QLineEdit()
     limit = QDoubleSpinBox()
@@ -16,24 +44,23 @@ class DrugSearch(QWidget):
     dq = DrugQuery()
     currID = ''
     go_back = pyqtSignal(str)
-    
+    ingredients = []
 
     def start(self):
         self.results.clear()
-        query_res = self.dq.query(self.query.text(), int(self.limit.value()))
+        query_res, self.ingredients = self.dq.query(self.query.text(), int(self.limit.value()))
         if all(x == "" for x in query_res):
             self.results.append("ERROR: invalid query, please try again.")
             self.results.append("Serarch by name, color, shape, or id.")
         else:
-            for idx, i in enumerate(query_res):
-                if i == "":
-                    continue
-                json_dict = json.loads(i)
-                self.results.append(str(idx + 1) + ". " + "    Id:      "   + json_dict["id"]
+            i = 1
+            for json_dict in query_res:
+                self.results.append(str(i) + ". " + "    Id:      "   + json_dict["id"]
                                                         + "    Name:    "   + json_dict["spl_strength"] 
                                                         + "    Color:   "   + json_dict["splcolor_text"]
                                                         + "    Shape:   "   + json_dict["splshape_text"]
                                                         + "    Imprint: "   + json_dict["splimprint"]) 
+                i = i+1
                 self.results.append("\n")
             self.query_res = query_res
 
@@ -50,14 +77,41 @@ class DrugSearch(QWidget):
         i = int(self.res_num.value() - 1)
         if i < 0 or i > len(self.query_res) - 1:
             return
-        json_dict = json.loads(self.query_res[i])
+        allergies = mycol.find_one({'_id': ObjectId(self.currID)})["Conditions"].split("\n")
+        allergic = False
+        for allergy in allergies:
+            for ingredient in self.ingredients[i]:
+                print(allergy)
+                print(ingredient)
+                if allergy.lower() in ingredient.lower():
+                    allergic = True
+                    break
+            if(allergic):
+                break
+        if allergic:
+            self.popup.setVisible(True)
+        else:
+            json_dict = self.query_res[i]
+            mycol.update({'_id': ObjectId(self.currID)}, {"$push": { "Perscriptions": { "id"        : json_dict["id"], 
+                                                                                        "strength"  : json_dict["spl_strength"],
+                                                                                        "color"     : json_dict["splcolor_text"],
+                                                                                        "shape"     : json_dict["splshape_text"],
+                                                                                        "imprint"   : json_dict["splimprint"],
+                                                                                        "status"    : "ACTIVE"}}})
+    def forceAdd(self):
+        myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+        mydb = myclient["GHRS"]
+        mycol = mydb["PatientData"]
+        i = int(self.res_num.value() - 1)
+        if i < 0 or i > len(self.query_res) - 1:
+            return
+        json_dict = self.query_res[i]
         mycol.update({'_id': ObjectId(self.currID)}, {"$push": { "Perscriptions": { "id"        : json_dict["id"], 
                                                                                     "strength"  : json_dict["spl_strength"],
                                                                                     "color"     : json_dict["splcolor_text"],
                                                                                     "shape"     : json_dict["splshape_text"],
                                                                                     "imprint"   : json_dict["splimprint"],
                                                                                     "status"    : "ACTIVE"}}})
-
     def __init__(self):
         super(DrugSearch, self).__init__()
         
@@ -96,6 +150,7 @@ class DrugSearch(QWidget):
         go_button.clicked.connect(self.start)
         back_button.clicked.connect(self.back)
         add_button.clicked.connect(self.add)
+        self.popup.forceAdd.connect(self.forceAdd)
 
         self.setLayout(overallLayout)
 
