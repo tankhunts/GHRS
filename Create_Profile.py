@@ -12,6 +12,7 @@ from PyQt5 import QtGui
 
 
 class NotesPopup(QWidget):
+
     name = QLineEdit()
     addProfile = QGroupBox("Notes:")
     notes = QTextEdit()
@@ -41,7 +42,7 @@ class NotesPopup(QWidget):
 
     def __init__(self):
         QWidget.__init__(self)
-
+        self.setWindowTitle("GHRS - RLA - Create Profile: New Note")
         saveNote = QPushButton("Save Note")
         back = QPushButton("Cancel")
 
@@ -102,6 +103,7 @@ class maker(QWidget):
     raceT = ["", "American Indian", "Asian", "Black", "Hispanic", "Native Hawaiian", "White"]
 
     noteMaker = NotesPopup()
+
 
     addProfile = QGroupBox("Add Profile")
 

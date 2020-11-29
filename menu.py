@@ -23,6 +23,10 @@ class MainMenu(QWidget):
     add = pyqtSignal()
     export = pyqtSignal()
 
+    new = QGroupBox("For new customers")
+    returning = QGroupBox("For returning customers")
+    exporting = QGroupBox("Shipping data off")
+
     def goAdd(self):
         self.add.emit()
     def goSearch(self):
@@ -38,13 +42,27 @@ class MainMenu(QWidget):
         self.nameLabel.setAlignment(Qt.AlignCenter)
         self.setWindowTitle(self.title)
         #creating layout
-        self.optionsLayout.addWidget(self.addPatientButton)
-        self.optionsLayout.addWidget(self.searchButton)
+
+        layout1 = QVBoxLayout()
+        layout2 = QVBoxLayout()
+        layout3 = QVBoxLayout()
+
+        layout1.addWidget(self.addPatientButton)
+        layout2.addWidget(self.searchButton)
+        layout3.addWidget(self.exportButton)
+
+
+
+
+        self.new.setLayout(layout1)
+        self.returning.setLayout(layout2)
+        self.exporting.setLayout(layout3)
         self.mainLayout.addWidget(self.nameLabel)
-        self.mainLayout.addStretch()
-        self.mainLayout.addLayout(self.optionsLayout)
-        self.mainLayout.addWidget(self.exportButton)
-        self.mainLayout.addStretch()
+        #self.mainLayout.addStretch()
+        self.mainLayout.addWidget(self.new)
+        self.mainLayout.addWidget(self.returning)
+        self.mainLayout.addWidget(self.exporting)
+        #self.mainLayout.addStretch()
         self.setLayout(self.mainLayout)
 
         self.exportButton.clicked.connect(self.goExport)

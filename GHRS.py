@@ -1,6 +1,6 @@
 import sys
 import pymongo
-from PyQt5.QtWidgets import (QWidget , QMainWindow, QStackedWidget, QApplication, QVBoxLayout)
+from PyQt5.QtWidgets import (QWidget , QMainWindow, QStackedWidget, QApplication, QVBoxLayout, QGroupBox)
 from PyQt5 import QtCore
 from PyQt5.QtCore import (QDate)
 
@@ -29,11 +29,16 @@ class GHRS(QWidget):
     drugSearch = DrugSearch()
     addProf = maker()
 
+
+
     def goAdd(self):
+        self.setWindowTitle("GHRS - RLA - Add Profile")
         self.stacked.setCurrentIndex(8)
     def goSearch(self):
+        self.setWindowTitle("GHRS - RLA - Search Profile")
         self.stacked.setCurrentIndex(1)
     def goMenu(self):
+        self.setWindowTitle("GHRS - RLA - Main Menu")
         self.stacked.setCurrentIndex(0)
         self.resize(self.width(), 1000)
     def goView(self, identifier):
@@ -43,29 +48,30 @@ class GHRS(QWidget):
         mycol = mydb["PatientData"]
         record = mycol.find_one({'_id': ObjectId(identifier)})
         self.view.name.setText(record['First Name'] + ' ' + record['Last Name'])
+        self.setWindowTitle("GHRS - RLA - Profile: " + record['First Name'] + ' ' + record['Last Name'])
         self.view.DOB.setDate(QDate.fromString(record["DOB"], "yyyy-MM-dd"))
         self.view.race.setCurrentIndex(self.view.race.findText(record["Race"]))
-            #self.view.race.setText(record["Race"])
         self.view.gender.setText(record["Gender"])
         self.view.blood.setCurrentIndex(self.view.blood.findText(record["Blood Type"]))
-            #self.view.blood.setText(record["Blood Type"])
         self.view.company.setText(record["Insurance"])
         self.view.ID.setText(record["ID"])
         self.view.conditions.setText(record["Conditions"])
         self.view.showPrescriptions()
         self.stacked.setCurrentIndex(2)
     def goNoteSearch(self, id):
-        print(id)
+        self.setWindowTitle("GHRS - RLA - Note Search: " + self.view.name.text())
         self.searchNote.currId = id
         self.stacked.setCurrentIndex(3)
     def returnView(self):
+        self.setWindowTitle("GHRS - RLA - Profile: " + self.view.name.text())
         self.stacked.setCurrentIndex(2)
     def newNote(self, id):
-        #print("are you winning son")
+        self.setWindowTitle("GHRS - RLA - New Note: " + self.view.name.text())
         self.viewNote.prof_id = id
         self.stacked.setCurrentIndex(4)
     def editNote(self, noteDict, id):
         self.viewNote.prof_id = id
+        self.setWindowTitle("GHRS - RLA - Edit Note: " + self.view.name.text())
         self.searchNote.clear()
         self.viewNote.oldDict = noteDict
         self.viewNote.date = noteDict["Date"]
@@ -73,9 +79,11 @@ class GHRS(QWidget):
         self.viewNote.subject.setText(noteDict["Subject"])
         self.stacked.setCurrentIndex(4)
     def goExport(self):
+        self.setWindowTitle("GHRS - RLA - Export Data")
         self.stacked.setCurrentIndex(5)
 
     def goManage(self, identifier):
+        self.setWindowTitle("GHRS - RLA - Manage Meds: " + self.view.name.text())
         myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
         mydb = myclient["GHRS"]
         mycol = mydb["PatientData"]
@@ -84,6 +92,7 @@ class GHRS(QWidget):
         self.man.showPrescriptions()
         self.stacked.setCurrentIndex(6)
     def goDrugSearch(self):
+        self.setWindowTitle("GHRS - RLA - Drug Search: " + self.view.name.text())
         self.stacked.setCurrentIndex(7)
 
 
@@ -105,18 +114,24 @@ class GHRS(QWidget):
         menu.add.connect(self.goAdd)
         menu.search.connect(self.goSearch)
         menu.export.connect(self.goExport)
+
+        menu.search.connect(search.begin_search)
+
         search.ex.connect(self.goMenu) 
         search.op.connect(self.goView)
         self.view.ex.connect(self.goSearch)
+        self.view.ex.connect(search.begin_search)
 
         self.addProf.ex.connect(self.goMenu)
         self.addProf.sav.connect(self.edit.addPatient)
         
         self.view.noteSearch.connect(self.goNoteSearch)
+        self.view.noteSearch.connect(self.searchNote.begin_search)
         self.view.dele.connect(self.edit.deleteProfile)
         self.view.dele.connect(search.begin_search)
         self.searchNote.adding_note.connect(self.newNote)
         self.viewNote.ret.connect(self.goNoteSearch)
+        self.viewNote.ret.connect(self.searchNote.begin_search)
 
         self.searchNote.ex.connect(self.returnView)
         #self.viewNote.ret.connect(self.returnView)

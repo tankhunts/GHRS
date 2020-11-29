@@ -46,7 +46,6 @@ class ProfileEditor:
         #addDict["Note"] = record[9]
         self.mycol.insert_one(addDict)
 
-    #TODO link with a delete option in the GUI
     def deleteProfile(self, identifier):
         self.mycol.delete_one({'_id': ObjectId(identifier)})
 
