@@ -42,7 +42,9 @@ while i < toGen:
     myDict["Race"] = Race[random.randrange(6)]
     myDict['Blood Type'] = blood[random.randrange(8)]
     myDict['Gender'] = gender[random.randrange(10)]
-    myDict["Conditions"] = ''
+    myDict["Conditions"] = ""
+    myDict["Perscriptions"] = []
+    myDict["Notes"] = []
     mycol.insert_one(myDict)
     i+=1
 
