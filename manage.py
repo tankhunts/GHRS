@@ -52,6 +52,19 @@ class Manage(QWidget):
                                                                                     "status"    : status_update}}})
 
         self.showPrescriptions()
+    
+    def remove(self):
+        idx = int(self.select_box.value() - 1)
+        #idx_string = "Perscriptions.%d" % idx
+        myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+        mydb = myclient["GHRS"]
+        mycol = mydb["PatientData"]
+        currRecord = mycol.find_one({'_id': ObjectId(self.currID)})
+        if idx < 0 or idx > len(currRecord["Perscriptions"]) - 1:
+            return
+        currPrescrip = currRecord["Perscriptions"][idx]
+        mycol.update({'_id': ObjectId(self.currID)}, {'$pull': { 'Perscriptions' : { 'id' : currPrescrip['id'] } } } )      
+        self.showPrescriptions()
 
     def showPrescriptions(self):
         self.curr_prescriptions.clear()
@@ -83,7 +96,7 @@ class Manage(QWidget):
         search_drug.clicked.connect(self.search)
         back_button.clicked.connect(self.back)
         active_button.clicked.connect(self.toggleActive)
-
+        remove_button.clicked.connect(self.remove)
         self.select_box.setValue(1)
         self.select_box.setDecimals(0)
         bottomLayout = QHBoxLayout()
