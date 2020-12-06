@@ -18,7 +18,8 @@ class ProfileEditor:
                                   'ID'         : record[6],
                                   'Race'       : record[2],
                                   'Blood Type' : record[4],
-                                  'Gender'     : record[3]}})
+                                  'Gender'     : record[3],
+                                  'Conditions' : record[7]}})
 
     def addPatient(self, record):
         addDict = {}

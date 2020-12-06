@@ -137,7 +137,8 @@ class ViewProfile(QWidget):
             self.gender.text(),
             str(self.blood.currentText()),
             self.company.text(),
-            self.ID.text()]
+            self.ID.text(),
+            self.conditions.toPlainText()]
             #TODO add notes sections
         return record
     
