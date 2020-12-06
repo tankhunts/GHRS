@@ -29,8 +29,11 @@ class DrugQuery():
             ingredients.pop(len(ingredients)-1)
             for i in range(len(ingredients)):
                 ingredients[i] = ingredients[i][ingredients[i].find("[")+1:ingredients[i].find("]")]
-            ingredients.extend(row["spl_inactive_ing"].split(";"))
-            ingredients.pop(len(ingredients)-1)
+            try:
+                ingredients.extend(row["spl_inactive_ing"].split(";"))
+                ingredients.pop(len(ingredients)-1)
+            except AttributeError:
+                pass
             json_dict["id"] = row["id"]
             json_dict["splshape_text"] = row["splshape_text"]
             json_dict["splimprint"] = row["splimprint"]
