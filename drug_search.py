@@ -68,6 +68,8 @@ class DrugSearch(QWidget):
         self.currID = identifier
         
     def back(self):
+        self.query.clear()
+        self.results.clear()
         self.go_back.emit(self.currID)
     
     def add(self):
